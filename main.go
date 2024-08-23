@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"os/signal"
@@ -57,6 +58,14 @@ func run(ctx context.Context) error {
 }
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
+	a, b := rand.Int(), rand.Int()
+
+	msg := fmt.Sprintf("%s %d", viper.GetString("pong_message"), sum(a, b))
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(viper.GetString("pong_message")))
+	w.Write([]byte(msg))
+}
+
+func sum(a, b int) int {
+	return a + b
 }
