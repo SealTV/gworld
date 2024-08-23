@@ -56,31 +56,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta Stat
-        id: meta-stat
-        uses: docker/metadata-action@v4
-        with:
-          # list of Docker images to use as base name for tags
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-stat
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=sha
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}}
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
-      - name: Build and push Stat
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: Dockerfile.stat
-          platforms: linux/amd64
-          push: ${{ github.ref_name == 'develop' || github.ref_name == 'main' || github.ref_type == 'tag' }}
-          tags: ${{ steps.meta-stat.outputs.tags }}
-          labels: ${{ steps.meta-stat.outputs.labels }}
-
       - name: Docker meta
         id: meta-gateway
         uses: docker/metadata-action@v4
@@ -100,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Dockerfile.gateway
+          file: Dockerfile
           platforms: linux/amd64
           push: ${{ github.ref_name == 'develop' || github.ref_name == 'main' || github.ref_type == 'tag' }}
           tags: ${{ steps.meta-gateway.outputs.tags }}
